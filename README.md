@@ -8,9 +8,10 @@ AFMsgPackSerializer
 ```objective-c
 // AFHTTPClient Configuration
 AFHTTPClient *client = [AFHTTPClient client];
-client.requestSerializer = [AFMsgPackSerializer serializer];
 client.responseSerializer = [AFMsgPackSerializer serializer];
-[client GET:@"http://example.com/foo.msgpack"]
+[client GET:@"http://example.com/foo.msgpack" parameters:nil success:^(NSHTTPURLResponse *response, id responseObject) {
+  // ... 
+} failure:nil];
 
 // AFHTTPRequestOperation Configuration
 NSURL *URL = [NSURL URLWithString:@"http://example.com/foo.msgpack"];
