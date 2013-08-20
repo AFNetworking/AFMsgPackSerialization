@@ -1,0 +1,6 @@
+[submodule "MsgPackSerialization"]
+	path = MsgPackSerialization
+	url = https://github.com/mattt/MsgPackSerialization.git
+[submodule "AFNetworking"]
+	path = AFNetworking
+	url = https://github.com/AFNetworking/AFNetworking.git
