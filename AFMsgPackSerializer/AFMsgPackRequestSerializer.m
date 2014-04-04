@@ -1,6 +1,6 @@
-// AFMsgPackSerializer.m
+// AFMsgPackRequestSerializer.m
 // 
-// Copyright (c) 2013 AFNetworking (http://afnetworking.com)
+// Copyright (c) 2014 AFNetworking (http://afnetworking.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,39 +20,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import "AFMsgPackSerializer.h"
+#import "AFMsgPackRequestSerializer.h"
 
-@implementation AFMsgPackSerializer
+@implementation AFMsgPackRequestSerializer
 
 + (instancetype)serializer {
-    return [self serializerWithReadingOptions:0 writingOptions:0];
+    return [self serializerWithWritingOptions:0];
 }
 
-+ (instancetype)serializerWithReadingOptions:(MsgPackReadingOptions)readingOptions
-                              writingOptions:(MsgPackWritingOptions)writingOptions
-{
-    AFMsgPackSerializer *serializer = [[self alloc] init];
-    serializer.readingOptions = readingOptions;
++ (instancetype)serializerWithWritingOptions:(MsgPackWritingOptions)writingOptions {
+    AFMsgPackRequestSerializer *serializer = [[self alloc] init];
     serializer.writingOptions = writingOptions;
 
     return serializer;
 }
 
-- (instancetype)init {
-    self = [super init];
-    if (!self) {
-        return nil;
-    }
-
-    self.acceptableContentTypes = [NSSet setWithObjects:@"application/x-msgpack", nil];
-
-    return self;
-}
-
 #pragma mark - AFURLRequestSerialization
 
 - (NSURLRequest *)requestBySerializingRequest:(NSURLRequest *)request
-                               withParameters:(NSDictionary *)parameters
+                               withParameters:(id)parameters
                                         error:(NSError *__autoreleasing *)error
 {
     NSParameterAssert(request);
@@ -63,9 +49,15 @@
 
     NSMutableURLRequest *mutableRequest = [request mutableCopy];
 
-    [self.HTTPRequestHeaders enumerateKeysAndObjectsUsingBlock:^(id field, id value, BOOL *stop) {
-        [mutableRequest setValue:value forHTTPHeaderField:field];
+    [self.HTTPRequestHeaders enumerateKeysAndObjectsUsingBlock:^(id field, id value, BOOL * __unused stop) {
+        if (![request valueForHTTPHeaderField:field]) {
+            [mutableRequest setValue:value forHTTPHeaderField:field];
+        }
     }];
+
+    if (!parameters) {
+        return mutableRequest;
+    }
 
     [mutableRequest setValue:@"application/x-msgpack" forHTTPHeaderField:@"Content-Type"];
     [mutableRequest setHTTPBody:[MsgPackSerialization dataWithMsgPackObject:parameters options:self.writingOptions error:error]];
@@ -73,48 +65,31 @@
     return mutableRequest;
 }
 
-#pragma mark - AFURLRequestSerialization
-
-- (id)responseObjectForResponse:(NSURLResponse *)response
-                           data:(NSData *)data
-                          error:(NSError *__autoreleasing *)error
-{
-    if (![self validateResponse:(NSHTTPURLResponse *)response data:data error:error]) {
-        return nil;
-    }
-
-    return [MsgPackSerialization MsgPackObjectWithData:data options:self.readingOptions error:error];    
-}
-
-
 #pragma mark - NSCoding
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
+- (id)initWithCoder:(NSCoder *)decoder {
+    self = [super initWithCoder:decoder];
     if (!self) {
         return nil;
     }
 
-    self.readingOptions = [aDecoder decodeIntegerForKey:@"readingOptions"];
-    self.writingOptions = [aDecoder decodeIntegerForKey:@"writingOptions"];
+    self.writingOptions = (MsgPackWritingOptions)[[decoder decodeObjectForKey:NSStringFromSelector(@selector(writingOptions))] unsignedIntegerValue];
 
     return self;
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-    [super encodeWithCoder:aCoder];
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
 
-    [aCoder encodeInteger:self.readingOptions forKey:@"readingOptions"];
-    [aCoder encodeInteger:self.writingOptions forKey:@"writingOptions"];
+    [coder encodeObject:@(self.writingOptions) forKey:NSStringFromSelector(@selector(writingOptions))];
 }
 
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(NSZone *)zone {
-    AFMsgPackSerializer *serializer = [[[self class] allocWithZone:zone] init];
-    serializer.readingOptions = self.readingOptions;
+    AFMsgPackRequestSerializer *serializer = [[[self class] allocWithZone:zone] init];
     serializer.writingOptions = self.writingOptions;
-
+    
     return serializer;
 }
 

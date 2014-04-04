@@ -1,6 +1,6 @@
-// AFMsgPackSerializer.h
+// AFMsgPackResponseSerializer.h
 // 
-// Copyright (c) 2013 AFNetworking (http://afnetworking.com)
+// Copyright (c) 2014 AFNetworking (http://afnetworking.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,16 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import "AFSerialization.h"
+#import "MsgPackSerialization.h"
+#import "AFURLResponseSerialization.h"
 
 /**
- `AFMsgPackSerializer` is a subclass of `AFHTTPSerializer` that validates and decodes MsgPack responses.
+ `AFMsgPackResponseSerializer` is a subclass of `AFHTTPResponseSerializer` that validates and decodes MsgPack responses.
 
  By default, `AFMsgPackSerializer` accepts the following MIME types:
 
  - `application/x-msgpack`
  */
-@interface AFMsgPackSerializer : AFHTTPSerializer
+@interface AFMsgPackResponseSerializer : AFHTTPResponseSerializer
 
 /**
  Options for reading the response MsgPack data and creating the Foundation objects. For possible values, see the `MsgPackSerialization` documentation section "MsgPackReadingOptions". `0` by default.
@@ -37,17 +38,10 @@
 @property (nonatomic, assign) MsgPackReadingOptions readingOptions;
 
 /**
- Options for writing the request MsgPack data from Foundation objects. For possible values, see the `MsgPackSerialization` documentation section "MsgPackWritingOptions". `0` by default.
- */
-@property (nonatomic, assign) MsgPackWritingOptions writingOptions;
-
-/**
- Creates and returns a MsgPack serializer with specified reading and writing options.
+ Creates and returns a MsgPack response serializer with specified reading options.
 
  @param readingOptions The specified MsgPack reading options.
- @param writingOptions The specified MsgPack writing options.
  */
-+ (instancetype)serializerWithReadingOptions:(MsgPackReadingOptions)readingOptions
-                              writingOptions:(MsgPackWritingOptions)writingOptions;
++ (instancetype)serializerWithReadingOptions:(MsgPackReadingOptions)readingOptions;
 
 @end
