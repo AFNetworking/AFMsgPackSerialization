@@ -1,25 +1,20 @@
-AFMsgPackSerializer
-====================
+AFMsgPackSerialization
+======================
 
-`AFMsgPackSerializer` automatically encodes and decodes objects to and from the [MsgPack](http://msgpack.org) format.
+`AFMsgPackSerialization` is an AFNetworking 2 extension that provides request and response serializers to automatically encodes and decodes objects to and from the [MsgPack](http://msgpack.org) format.
 
 ## Usage
 
 ```objective-c
 // AFHTTPClient Configuration
-AFHTTPClient *client = [AFHTTPClient client];
-client.responseSerializer = [AFMsgPackSerializer serializer];
-[client GET:@"http://example.com/foo.msgpack" parameters:nil success:^(NSHTTPURLResponse *response, id responseObject) {
-  // ... 
-} failure:nil];
-
-// AFHTTPRequestOperation Configuration
-NSURL *URL = [NSURL URLWithString:@"http://example.com/foo.msgpack"];
-NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
-                                           initWithRequest:request];
-operation.responseSerializer = [AFMsgPackSerializer serializer];
-[operation start];
+AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+manager.responseSerializer = [AFMsgPackSerializer serializer];
+[manager GET:@"http://example.com/foo.msgpack"
+  parameters:nil
+     success:^(NSHTTPURLResponse *response, id responseObject) {
+         // ...
+     }
+     failure:nil];
 ```
 
 ---
@@ -34,4 +29,4 @@ Mattt Thompson
 
 ## License
 
-AFMsgPackSerializer is available under the MIT license. See the LICENSE file for more info.
+AFMsgPackSerialization is available under the MIT license. See the LICENSE file for more info.
