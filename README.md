@@ -8,7 +8,7 @@ AFMsgPackSerialization
 ```objective-c
 // AFHTTPClient Configuration
 AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-manager.responseSerializer = [AFMsgPackSerializer serializer];
+manager.responseSerializer = [AFMsgPackResponseSerializer serializer];
 [manager GET:@"http://example.com/foo.msgpack"
   parameters:nil
      success:^(NSHTTPURLResponse *response, id responseObject) {
