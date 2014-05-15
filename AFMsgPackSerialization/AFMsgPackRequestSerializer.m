@@ -65,7 +65,7 @@
     return mutableRequest;
 }
 
-#pragma mark - NSCoding
+#pragma mark - NSSecureCoding
 
 - (id)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
@@ -73,7 +73,7 @@
         return nil;
     }
 
-    self.writingOptions = (MsgPackWritingOptions)[[decoder decodeObjectForKey:NSStringFromSelector(@selector(writingOptions))] unsignedIntegerValue];
+    self.writingOptions = (MsgPackWritingOptions)[[decoder decodeObjectOfClass:[NSNumber class] forKey:NSStringFromSelector(@selector(writingOptions))] unsignedIntegerValue];
 
     return self;
 }
